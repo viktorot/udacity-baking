@@ -62,7 +62,9 @@ public class StepListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_step_list, container, false);
         ButterKnife.bind(this, view);
 
+        toolbar.setTitle("[Steps]");
         toolbar.setNavigationOnClickListener(view1 -> onBackPressed());
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_vector);
 
         return view;
     }
