@@ -47,9 +47,9 @@ public abstract class Navigator {
                 .commit();
     }
 
-    public void navigateToStepDetails(@NonNull Step step) {
+    public void navigateToStepDetails(@NonNull Recipe recipe, int index) {
         manager.beginTransaction()
-                .replace(mainHolder.getId(), StepDetailsFragment.newInstance(step), StepDetailsFragment.TAG)
+                .replace(mainHolder.getId(), StepDetailsFragment.newInstance(recipe, index), StepDetailsFragment.TAG)
                 .addToBackStack(StepDetailsFragment.TAG)
                 .commit();
     }

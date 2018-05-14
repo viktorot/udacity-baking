@@ -19,6 +19,7 @@ import io.viktorot.udacity_baking.R;
 import io.viktorot.udacity_baking.data.Recipe;
 import io.viktorot.udacity_baking.data.Step;
 import io.viktorot.udacity_baking.ui.main.MainActivity;
+import timber.log.Timber;
 
 public class StepListFragment extends Fragment {
 
@@ -39,7 +40,7 @@ public class StepListFragment extends Fragment {
     public static StepListFragment newInstance(Recipe recipe) {
         Bundle args = new Bundle();
         args.putParcelable(ARG_RECIPE, recipe);
-        
+
         StepListFragment fragment = new StepListFragment();
         fragment.setArguments(args);
         return fragment;
@@ -78,7 +79,6 @@ public class StepListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_step_list, container, false);
         ButterKnife.bind(this, view);
 
-        toolbar.setTitle("[Steps]");
         toolbar.setNavigationOnClickListener(view1 -> onBackPressed());
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_vector);
 
@@ -94,11 +94,14 @@ public class StepListFragment extends Fragment {
     }
 
     private void onDataChanged(@NonNull Recipe recipe) {
+        this.toolbar.setTitle(recipe.name);
         this.adapter.setItems(recipe.steps);
     }
 
     private void onClick(@NonNull Step step) {
-        MainActivity.getNavigator(requireActivity()).navigateToStepDetails(step);
+        Recipe recipe = viewModel.getData();
+        int index = recipe.steps.indexOf(step);
+        MainActivity.getNavigator(requireActivity()).navigateToStepDetails(recipe, index);
     }
 
     private void onBackPressed() {
