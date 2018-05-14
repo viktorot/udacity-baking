@@ -4,10 +4,14 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +24,14 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     @NonNull
     private RecipeAdapter.Callback callback;
 
+    @NonNull
+    private Context context;
+
     private ArrayList<Recipe> items = new ArrayList<>();
 
-    public RecipeAdapter(@NonNull RecipeAdapter.Callback callback) {
+    public RecipeAdapter(@NonNull RecipeAdapter.Callback callback, @NonNull Context context) {
         this.callback = callback;
+        this.context = context;
     }
 
     public void setItems(List<Recipe> items) {
@@ -54,6 +62,15 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
         Recipe item = items.get(position);
         holder.data = item;
         holder.tvTitle.setText(item.name);
+
+        if (!TextUtils.isEmpty(item.image)) {
+            Picasso.with(context)
+                    .load(item.image)
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.img);
+        } else {
+            holder.img.setBackgroundResource(R.drawable.placeholder);
+        }
     }
 
     @Override
@@ -67,11 +84,13 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
 
         final View root;
         final TextView tvTitle;
+        final ImageView img;
 
         ViewHolder(View itemView) {
             super(itemView);
             root = itemView.findViewById(R.id.root);
             tvTitle = itemView.findViewById(R.id.title);
+            img = itemView.findViewById(R.id.image);
         }
     }
 

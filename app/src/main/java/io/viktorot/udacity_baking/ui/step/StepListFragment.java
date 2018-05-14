@@ -34,7 +34,7 @@ public class StepListFragment extends Fragment {
     @BindView(R.id.recycler)
     RecyclerView recycler;
 
-    private final StepAdapter adapter = new StepAdapter(this::onClick);
+    private StepAdapter adapter;
 
     public static StepListFragment newInstance(Recipe recipe) {
         Bundle args = new Bundle();
@@ -58,6 +58,8 @@ public class StepListFragment extends Fragment {
         if (recipe == null) {
             throw new IllegalArgumentException("recipe cannot be null");
         }
+
+        adapter = new StepAdapter(this::onClick, requireContext());
 
         viewModel = ViewModelProviders.of(this).get(StepListViewModel.class);
         viewModel.setData(recipe);
