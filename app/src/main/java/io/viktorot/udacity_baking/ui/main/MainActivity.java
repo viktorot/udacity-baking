@@ -40,7 +40,9 @@ public class MainActivity extends AppCompatActivity implements Navigator.Provide
 
         navigator.init(getSupportFragmentManager(), mainHolder, detailsHolder);
 
-        navigator.navigateToRecipeList();
+        if (savedInstanceState == null) {
+            navigator.navigateToRecipeList();
+        }
     }
 
     @Override

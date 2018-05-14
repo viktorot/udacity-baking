@@ -6,6 +6,8 @@ import android.view.View;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.annotations.Nullable;
 import io.viktorot.udacity_baking.data.Recipe;
+import io.viktorot.udacity_baking.data.Step;
+import io.viktorot.udacity_baking.ui.details.StepDetailsFragment;
 import io.viktorot.udacity_baking.ui.recipe.RecipeListFragment;
 import io.viktorot.udacity_baking.ui.step.StepListFragment;
 
@@ -42,6 +44,13 @@ public abstract class Navigator {
         manager.beginTransaction()
                 .replace(mainHolder.getId(), StepListFragment.newInstance(recipe), StepListFragment.TAG)
                 .addToBackStack(StepListFragment.TAG)
+                .commit();
+    }
+
+    public void navigateToStepDetails(@NonNull Step step) {
+        manager.beginTransaction()
+                .replace(mainHolder.getId(), StepDetailsFragment.newInstance(step), StepDetailsFragment.TAG)
+                .addToBackStack(StepDetailsFragment.TAG)
                 .commit();
     }
 

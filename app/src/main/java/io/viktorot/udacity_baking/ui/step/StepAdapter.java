@@ -1,4 +1,4 @@
-package io.viktorot.udacity_baking.ui.recipe;
+package io.viktorot.udacity_baking.ui.step;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -13,20 +13,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.viktorot.udacity_baking.R;
-import io.viktorot.udacity_baking.data.Recipe;
+import io.viktorot.udacity_baking.data.Step;
 
-public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder> {
+public class StepAdapter extends RecyclerView.Adapter<StepAdapter.ViewHolder> {
 
     @NonNull
-    private RecipeAdapter.Callback callback;
+    private StepAdapter.Callback callback;
 
-    private ArrayList<Recipe> items = new ArrayList<>();
+    private ArrayList<Step> items = new ArrayList<>();
 
-    public RecipeAdapter(@NonNull RecipeAdapter.Callback callback) {
+    public StepAdapter(@NonNull Callback callback) {
         this.callback = callback;
     }
 
-    public void setItems(List<Recipe> items) {
+    public void setItems(List<Step> items) {
         this.items.clear();
         this.items.addAll(items);
         notifyDataSetChanged();
@@ -34,7 +34,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
 
     @NonNull
     @Override
-    public RecipeAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         View view = LayoutInflater.from(context).inflate(R.layout.item_recipe, parent, false);
 
@@ -50,10 +50,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecipeAdapter.ViewHolder holder, int position) {
-        Recipe item = items.get(position);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Step item = items.get(position);
         holder.data = item;
-        holder.tvTitle.setText(item.name);
+        holder.tvTitle.setText(item.description);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         @Nullable
-        Recipe data;
+        Step data;
 
         final View root;
         final TextView tvTitle;
@@ -76,6 +76,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     }
 
     interface Callback {
-        void onClick(Recipe recipe);
+        void onClick(Step step);
     }
 }

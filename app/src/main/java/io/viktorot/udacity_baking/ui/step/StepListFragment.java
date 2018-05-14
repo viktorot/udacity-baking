@@ -1,9 +1,11 @@
 package io.viktorot.udacity_baking.ui.step;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import butterknife.ButterKnife;
 import io.viktorot.udacity_baking.Navigator;
 import io.viktorot.udacity_baking.R;
 import io.viktorot.udacity_baking.data.Recipe;
+import io.viktorot.udacity_baking.data.Step;
 import io.viktorot.udacity_baking.ui.main.MainActivity;
 
 public class StepListFragment extends Fragment {
@@ -23,14 +26,15 @@ public class StepListFragment extends Fragment {
 
     private static final String ARG_RECIPE = "arg_recipe";
 
-    @NonNull
-    private Recipe recipe;
+    private StepListViewModel viewModel;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
     @BindView(R.id.recycler)
     RecyclerView recycler;
+
+    private final StepAdapter adapter = new StepAdapter(this::onClick);
 
     public static StepListFragment newInstance(Recipe recipe) {
         Bundle args = new Bundle();
@@ -50,10 +54,20 @@ public class StepListFragment extends Fragment {
             throw new IllegalArgumentException("arguments must be set");
         }
 
-        recipe = args.getParcelable(ARG_RECIPE);
+        Recipe recipe = args.getParcelable(ARG_RECIPE);
         if (recipe == null) {
             throw new IllegalArgumentException("recipe cannot be null");
         }
+
+        viewModel = ViewModelProviders.of(this).get(StepListViewModel.class);
+        viewModel.setData(recipe);
+
+        viewModel.recipe.observe(this, data -> {
+            if (data == null) {
+                return;
+            }
+            onDataChanged(data);
+        });
     }
 
     @Nullable
@@ -66,7 +80,23 @@ public class StepListFragment extends Fragment {
         toolbar.setNavigationOnClickListener(view1 -> onBackPressed());
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_vector);
 
+        recycler.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recycler.setAdapter(adapter);
+
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
+    }
+
+    private void onDataChanged(@NonNull Recipe recipe) {
+        this.adapter.setItems(recipe.steps);
+    }
+
+    private void onClick(@NonNull Step step) {
+        MainActivity.getNavigator(requireActivity()).navigateToStepDetails(step);
     }
 
     private void onBackPressed() {
