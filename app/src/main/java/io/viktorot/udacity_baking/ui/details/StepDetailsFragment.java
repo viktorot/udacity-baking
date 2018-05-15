@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,11 @@ import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ads.AdsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -121,14 +126,26 @@ public class StepDetailsFragment extends Fragment {
     private void onStepChanged(@NonNull Step step) {
         toolbar.setTitle(step.shortDescription);
         tvDescription.setText(step.description);
+
+        if (!TextUtils.isEmpty(step.videoURL)) {
+            setupPlayer(step.videoURL);
+        }
     }
 
     private void setupPlayer(String url) {
-//        DefaultTrackSelector trackSelector = new DefaultTrackSelector(new DefaultBandwidthMeter());
-//        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(requireContext(), trackSelector);
-//
-//        ExtractorMediaSource.Factory(mediaDataSourceFactory).createMediaSource(uri)
+        String userAgent = Util.getUserAgent(requireContext().getApplicationContext(), "marjan");
+        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+//        DefaultHttpDataSourceFactory httpDataSourceFactory = new DefaultHttpDataSourceFactory(userAgent);
+        DefaultTrackSelector trackSelector = new DefaultTrackSelector(bandwidthMeter);
+        DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(requireContext().getApplicationContext(), userAgent);
 
+        Uri uri = Uri.parse(url);
+        MediaSource source = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(uri);
+
+        SimpleExoPlayer player = ExoPlayerFactory.newSimpleInstance(requireContext(), trackSelector);
+        player.prepare(source, true, true);
+
+        playerView.setPlayer(player);
     }
 
     private void onBackPressed() {
