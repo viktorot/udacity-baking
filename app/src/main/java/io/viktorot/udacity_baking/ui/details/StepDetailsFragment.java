@@ -99,21 +99,7 @@ public class StepDetailsFragment extends Fragment {
 
         userAgent = Util.getUserAgent(requireContext().getApplicationContext(), "imbakingmom");
 
-        Bundle args = getArguments();
-        if (args == null) {
-            throw new IllegalArgumentException("arguments must be set");
-        }
-
-        Recipe recipe = args.getParcelable(ARG_RECIPE);
-        if (recipe == null) {
-            throw new IllegalArgumentException("recipe cannot be null");
-        }
-
-        int index = args.getInt(ARG_INDEX, 0);
-
         viewModel = ViewModelProviders.of(this).get(StepDetailsViewModel.class);
-        setData(recipe, index);
-
         viewModel.recipe.observe(this, data -> {
             if (data == null) {
                 return;
@@ -126,12 +112,24 @@ public class StepDetailsFragment extends Fragment {
             }
             onStepChanged(data);
         });
+
+        Bundle args = getArguments();
+//        if (args == null) {
+//            throw new IllegalArgumentException("arguments must be set");
+//        }
+//
+//        Recipe recipe = args.getParcelable(ARG_RECIPE);
+//        if (recipe == null) {
+//            throw new IllegalArgumentException("recipe cannot be null");
+//        }
+//
+//        int index = args.getInt(ARG_INDEX, 0);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        //callback = (StepDetailsFragment.Callback) requireActivity();
+        callback = (StepDetailsFragment.Callback) requireActivity();
     }
 
     @Nullable
@@ -287,7 +285,7 @@ public class StepDetailsFragment extends Fragment {
     }
 
     private void onBackPressed() {
-        //callback.close();
+        callback.close();
     }
 
     interface Callback {

@@ -69,20 +69,20 @@ public abstract class Navigator {
     }
 
     public void navigateToStepDetails(@NonNull Recipe recipe, int index) {
-//        Intent intent = StepDetailsActivity.getIntent(context, recipe, index);
-//        context.startActivity(intent);
+        Intent intent = StepDetailsActivity.getIntent(context, recipe, index);
+        context.startActivity(intent);
 
-        int holderId;
-        if (detailsHolder != null) {
-            holderId = detailsHolder.getId();
-        } else {
-            holderId = mainHolder.getId();
-        }
-
-        manager.beginTransaction()
-                .replace(holderId, StepDetailsFragment.newInstance(recipe, index), StepDetailsFragment.TAG)
-                .addToBackStack(StepDetailsFragment.TAG)
-                .commit();
+//        int holderId;
+//        if (detailsHolder != null) {
+//            holderId = detailsHolder.getId();
+//        } else {
+//            holderId = mainHolder.getId();
+//        }
+//
+//        manager.beginTransaction()
+//                .replace(holderId, StepDetailsFragment.newInstance(recipe, index), StepDetailsFragment.TAG)
+//                .addToBackStack(StepDetailsFragment.TAG)
+//                .commit();
     }
 
     public void back(){
