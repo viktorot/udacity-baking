@@ -22,15 +22,31 @@
         app:layout_constraintTop_toTopOf="parent"
         app:titleTextColor="@android:color/white" />
 
-    <com.google.android.exoplayer2.ui.PlayerView
-        android:id="@+id/player_view"
+    <FrameLayout
+        android:id="@+id/container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@android:color/darker_gray"
         app:layout_constraintDimensionRatio="H,16:9"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <TextView
+            android:id="@+id/no_video"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="[No video available]"
+            android:textAlignment="center"
+            android:textColor="@android:color/black" />
+
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/player_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/darker_gray" />
+
+    </FrameLayout>
 
     <TextView
         android:id="@+id/desc"
@@ -41,7 +57,7 @@
         app:layout_constraintBottom_toBottomOf="@id/guide"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/player_view" />
+        app:layout_constraintTop_toBottomOf="@id/container" />
 
     <Button
         android:id="@+id/prev"

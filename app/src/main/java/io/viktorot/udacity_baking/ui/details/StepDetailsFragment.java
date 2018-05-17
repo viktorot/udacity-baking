@@ -45,11 +45,17 @@ public class StepDetailsFragment extends Fragment {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
+    @BindView(R.id.container)
+    View container;
+
     @BindView(R.id.player_view)
     PlayerView playerView;
 
     @BindView(R.id.desc)
     TextView tvDescription;
+
+    @BindView(R.id.no_video)
+    TextView tvNoVideo;
 
     private String userAgent;
     private final BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
@@ -88,7 +94,7 @@ public class StepDetailsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-         userAgent = Util.getUserAgent(requireContext().getApplicationContext(), "imbakingmom");
+        userAgent = Util.getUserAgent(requireContext().getApplicationContext(), "imbakingmom");
 
         viewModel = ViewModelProviders.of(this).get(StepDetailsViewModel.class);
         viewModel.recipe.observe(this, data -> {
@@ -109,10 +115,6 @@ public class StepDetailsFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         callback = (StepDetailsFragment.Callback) requireActivity();
-    }
-
-    public void setData(Recipe recipe, int index) {
-        viewModel.setData(recipe, index);
     }
 
     @Nullable
@@ -172,6 +174,10 @@ public class StepDetailsFragment extends Fragment {
         viewModel.goToNextStep();
     }
 
+    public void setData(Recipe recipe, int index) {
+        viewModel.setData(recipe, index);
+    }
+
     private void onDataChanged(@NonNull Recipe recipe) {
     }
 
@@ -180,7 +186,13 @@ public class StepDetailsFragment extends Fragment {
         tvDescription.setText(step.description);
 
         if (!TextUtils.isEmpty(step.videoURL)) {
+            showPlayer();
+            showNoVideoLabel(false);
+
             setupPlayer(step.videoURL);
+        } else {
+            showNoVideoLabel();
+            showPlayer(false);
         }
     }
 
@@ -192,11 +204,11 @@ public class StepDetailsFragment extends Fragment {
         fullscreenConstraints.setVisibility(R.id.prev, ConstraintSet.GONE);
         fullscreenConstraints.setVisibility(R.id.next, ConstraintSet.GONE);
 
-        fullscreenConstraints.connect(playerView.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
-        fullscreenConstraints.connect(playerView.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
-        fullscreenConstraints.connect(playerView.getId(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START);
-        fullscreenConstraints.connect(playerView.getId(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END);
-        fullscreenConstraints.setDimensionRatio(playerView.getId(), null);
+        fullscreenConstraints.connect(container.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
+        fullscreenConstraints.connect(container.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+        fullscreenConstraints.connect(container.getId(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START);
+        fullscreenConstraints.connect(container.getId(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END);
+        fullscreenConstraints.setDimensionRatio(container.getId(), null);
 
         fullscreenConstraints.applyTo(root);
     }
@@ -206,7 +218,7 @@ public class StepDetailsFragment extends Fragment {
     }
 
     private void setupPlayer(String url) {
-        //releasePlayer();
+        releasePlayer();
 
         DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(requireContext().getApplicationContext(), userAgent);
         MediaSource source = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(url));
@@ -214,6 +226,7 @@ public class StepDetailsFragment extends Fragment {
         initPlayer();
 
         player.prepare(source, true, true);
+        player.setPlayWhenReady(true);
         playerView.setPlayer(player);
     }
 
@@ -230,6 +243,30 @@ public class StepDetailsFragment extends Fragment {
         player.stop();
         player.release();
         player = null;
+    }
+
+    private void showPlayer() {
+        showPlayer(true);
+    }
+
+    private void showPlayer(boolean show) {
+        if (show) {
+            playerView.setVisibility(View.VISIBLE);
+        } else {
+            playerView.setVisibility(View.GONE);
+        }
+    }
+
+    private void showNoVideoLabel() {
+        showNoVideoLabel(true);
+    }
+
+    private void showNoVideoLabel(boolean show) {
+        if (show) {
+            tvNoVideo.setVisibility(View.VISIBLE);
+        } else {
+            tvNoVideo.setVisibility(View.GONE);
+        }
     }
 
     private void onBackPressed() {
