@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,9 @@ public class StepContainerFragment extends Fragment implements StepListFragment.
 
     private static final String ARG_RECIPE = "arg_recipe";
 
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
     @Nullable
     @BindView(R.id.detail_holder)
     View detailsHolder;
@@ -41,6 +45,13 @@ public class StepContainerFragment extends Fragment implements StepListFragment.
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_step_container, container, false);
         ButterKnife.bind(this, view);
+
+        toolbar.setNavigationOnClickListener(view1 -> onBackPressed());
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_vector);
+
+        Recipe recipe = getData();
+        this.toolbar.setTitle(recipe.name);
+
         return view;
     }
 
@@ -59,9 +70,13 @@ public class StepContainerFragment extends Fragment implements StepListFragment.
         return recipe;
     }
 
+    private void onBackPressed() {
+        MainActivity.getNavigator(requireActivity()).back();
+    }
+
     @Override
     public void back() {
-        MainActivity.getNavigator(requireActivity()).back();
+        onBackPressed();
     }
 
     @Override

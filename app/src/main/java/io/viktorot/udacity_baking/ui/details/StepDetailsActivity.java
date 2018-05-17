@@ -11,7 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import io.viktorot.udacity_baking.R;
 import io.viktorot.udacity_baking.data.Recipe;
 
-public class StepDetailsActivity extends AppCompatActivity implements StepDetailsFragment.Callback {
+public class StepDetailsActivity extends AppCompatActivity  {
 
     private static final String ARG_RECIPE = "arg_recipe";
     private static final String ARG_INDEX = "arg_index";
@@ -53,10 +53,5 @@ public class StepDetailsActivity extends AppCompatActivity implements StepDetail
     private StepDetailsFragment getDetailsFragment() {
         Fragment frag = getSupportFragmentManager().findFragmentById(R.id.details_fragment);
         return (StepDetailsFragment) frag;
-    }
-
-    @Override
-    public void close() {
-        finish();
     }
 }

@@ -26,9 +26,6 @@ public class StepListFragment extends Fragment {
 
     private StepListViewModel viewModel;
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-
     @BindView(R.id.recycler)
     RecyclerView recycler;
 
@@ -78,9 +75,6 @@ public class StepListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_step_list, container, false);
         ButterKnife.bind(this, view);
 
-        toolbar.setNavigationOnClickListener(view1 -> onBackPressed());
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_vector);
-
         recycler.setLayoutManager(new LinearLayoutManager(requireContext()));
         recycler.setAdapter(adapter);
 
@@ -92,7 +86,6 @@ public class StepListFragment extends Fragment {
     }
 
     private void onDataChanged(@NonNull Recipe recipe) {
-        this.toolbar.setTitle(recipe.name);
         this.adapter.setItems(recipe.steps);
     }
 

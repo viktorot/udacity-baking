@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.MutableLiveData;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.util.Objects;
 
@@ -29,6 +30,22 @@ public class StepDetailsViewModel extends AndroidViewModel {
 
         Step step = getStepAt(index);
         this.step.setValue(step);
+    }
+
+    public Recipe getRecipe() {
+        return Objects.requireNonNull(this.recipe.getValue());
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    @Nullable
+    public Step getCurrentStep() {
+        if (index == -1) {
+            return null;
+        }
+        return getStepAt(index);
     }
 
     private Step getStepAt(int index) {

@@ -34,6 +34,7 @@ import butterknife.OnClick;
 import io.viktorot.udacity_baking.R;
 import io.viktorot.udacity_baking.data.Recipe;
 import io.viktorot.udacity_baking.data.Step;
+import io.viktorot.udacity_baking.ui.main.MainActivity;
 
 public class StepDetailsFragment extends Fragment {
 
@@ -67,8 +68,6 @@ public class StepDetailsFragment extends Fragment {
 
     private ConstraintSet originalConstraints = new ConstraintSet();
     private ConstraintSet fullscreenConstraints = new ConstraintSet();
-
-    private StepDetailsFragment.Callback callback;
 
     private StepDetailsViewModel viewModel;
 
@@ -113,7 +112,13 @@ public class StepDetailsFragment extends Fragment {
             onStepChanged(data);
         });
 
-        Bundle args = getArguments();
+        Bundle args;
+        if (savedInstanceState == null) {
+            args = getArguments();
+        } else {
+            args = savedInstanceState;
+        }
+
         if (args == null) {
             throw new IllegalArgumentException("arguments must be set");
         }
@@ -125,12 +130,6 @@ public class StepDetailsFragment extends Fragment {
 
         int index = args.getInt(ARG_INDEX, 0);
         setData(recipe, index);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-//        callback = (StepDetailsFragment.Callback) requireActivity();
     }
 
     @Nullable
@@ -152,7 +151,7 @@ public class StepDetailsFragment extends Fragment {
     public void onStart() {
         super.onStart();
         if (Util.SDK_INT > 23) {
-            initPlayer();
+            initPlayer(true);
         }
     }
 
@@ -160,7 +159,7 @@ public class StepDetailsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if (Util.SDK_INT <= 23) {
-            initPlayer();
+            initPlayer(true);
         }
     }
 
@@ -178,6 +177,19 @@ public class StepDetailsFragment extends Fragment {
             releasePlayer();
         }
         super.onStop();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        Recipe recipe = viewModel.getRecipe();
+        outState.putParcelable(ARG_RECIPE, recipe);
+
+        int index = viewModel.getIndex();
+        if (index > -1) {
+            outState.putInt(ARG_INDEX, index);
+        }
     }
 
     @OnClick(R.id.prev)
@@ -239,16 +251,23 @@ public class StepDetailsFragment extends Fragment {
         DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(requireContext().getApplicationContext(), userAgent);
         MediaSource source = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(url));
 
-        initPlayer();
+        initPlayer(false);
 
         player.prepare(source, true, true);
         player.setPlayWhenReady(true);
         playerView.setPlayer(player);
     }
 
-    private void initPlayer() {
+    private void initPlayer(boolean restore) {
         if (player == null) {
             player = ExoPlayerFactory.newSimpleInstance(requireContext(), trackSelector);
+
+            if (restore) {
+                Step step = viewModel.getCurrentStep();
+                if (step != null) {
+                    onStepChanged(step);
+                }
+            }
         }
     }
 
@@ -286,10 +305,6 @@ public class StepDetailsFragment extends Fragment {
     }
 
     private void onBackPressed() {
-//        callback.close();
-    }
-
-    interface Callback {
-        void close();
+        MainActivity.getNavigator(requireActivity()).back();
     }
 }
