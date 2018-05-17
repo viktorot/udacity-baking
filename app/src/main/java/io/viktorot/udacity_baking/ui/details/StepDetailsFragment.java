@@ -39,6 +39,9 @@ public class StepDetailsFragment extends Fragment {
 
     public static final String TAG = "StepDetailsFragment";
 
+    private static final String ARG_RECIPE = "arg_recipe";
+    private static final String ARG_INDEX = "arg_index";
+
     @BindView(R.id.root)
     ConstraintLayout root;
 
@@ -71,8 +74,8 @@ public class StepDetailsFragment extends Fragment {
 
     public static StepDetailsFragment newInstance(@NonNull Recipe recipe, int index) {
         Bundle args = new Bundle();
-//        args.putParcelable(ARG_RECIPE, recipe);
-//        args.putInt(ARG_INDEX, index);
+        args.putParcelable(ARG_RECIPE, recipe);
+        args.putInt(ARG_INDEX, index);
 
         StepDetailsFragment fragment = new StepDetailsFragment();
         fragment.setArguments(args);
@@ -96,7 +99,21 @@ public class StepDetailsFragment extends Fragment {
 
         userAgent = Util.getUserAgent(requireContext().getApplicationContext(), "imbakingmom");
 
+        Bundle args = getArguments();
+        if (args == null) {
+            throw new IllegalArgumentException("arguments must be set");
+        }
+
+        Recipe recipe = args.getParcelable(ARG_RECIPE);
+        if (recipe == null) {
+            throw new IllegalArgumentException("recipe cannot be null");
+        }
+
+        int index = args.getInt(ARG_INDEX, 0);
+
         viewModel = ViewModelProviders.of(this).get(StepDetailsViewModel.class);
+        setData(recipe, index);
+
         viewModel.recipe.observe(this, data -> {
             if (data == null) {
                 return;
@@ -114,7 +131,7 @@ public class StepDetailsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        callback = (StepDetailsFragment.Callback) requireActivity();
+        //callback = (StepDetailsFragment.Callback) requireActivity();
     }
 
     @Nullable
@@ -270,7 +287,7 @@ public class StepDetailsFragment extends Fragment {
     }
 
     private void onBackPressed() {
-        callback.close();
+        //callback.close();
     }
 
     interface Callback {

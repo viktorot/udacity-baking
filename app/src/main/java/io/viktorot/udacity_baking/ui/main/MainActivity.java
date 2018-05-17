@@ -20,9 +20,13 @@ public class MainActivity extends AppCompatActivity implements Navigator.Provide
     @BindView(R.id.main_holder)
     View mainHolder;
 
-    @BindView(R.id.detail_holder)
     @Nullable
+    @BindView(R.id.detail_holder)
     View detailsHolder;
+
+    @Nullable
+    @BindView(R.id.fullscreen_holder)
+    View fullscreenHolder;
 
     private Navigator navigator = new Navigator() {
         @Override
@@ -38,17 +42,17 @@ public class MainActivity extends AppCompatActivity implements Navigator.Provide
 
         ButterKnife.bind(this);
 
-        navigator.init(this, getSupportFragmentManager(), mainHolder, detailsHolder);
+        navigator.init(this, getSupportFragmentManager(), mainHolder, fullscreenHolder, detailsHolder);
 
         if (savedInstanceState == null) {
-            navigator.navigateToRecipeList();
+            navigator.navigateToRecipes();
         }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        navigator.init(this, getSupportFragmentManager(), mainHolder, detailsHolder);
+        navigator.init(this, getSupportFragmentManager(), mainHolder, fullscreenHolder, detailsHolder);
     }
 
     @Override

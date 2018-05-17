@@ -26,26 +26,38 @@ public abstract class Navigator {
     @Nullable
     private View detailsHolder;
 
+    @Nullable
+    private View fullscreenHolder;
+
 
     public abstract void close();
 
-    public void init(@NonNull Context context, @NonNull FragmentManager manager, @NonNull View main, @Nullable View details) {
+    public void init(@NonNull Context context, @NonNull FragmentManager manager, @NonNull View main, @Nullable View fullscreen, @Nullable View details) {
         this.context = context;
         this.manager = manager;
         mainHolder = main;
         detailsHolder = details;
+        fullscreenHolder = fullscreen;
     }
 
     public void clear() {
         mainHolder = null;
         detailsHolder = null;
+        fullscreenHolder = null;
         context = null;
         manager = null;
     }
 
-    public void navigateToRecipeList() {
+    public void navigateToRecipes() {
+        int holderId;
+        if (fullscreenHolder != null) {
+            holderId = fullscreenHolder.getId();
+        } else {
+            holderId = mainHolder.getId();
+        }
+
         manager.beginTransaction()
-                .replace(mainHolder.getId(), RecipeListFragment.newInstance(), RecipeListFragment.TAG)
+                .replace(holderId, RecipeListFragment.newInstance(), RecipeListFragment.TAG)
                 .commit();
     }
 
@@ -57,12 +69,20 @@ public abstract class Navigator {
     }
 
     public void navigateToStepDetails(@NonNull Recipe recipe, int index) {
-        Intent intent = StepDetailsActivity.getIntent(context, recipe, index);
-        context.startActivity(intent);
-//        manager.beginTransaction()
-//                .replace(mainHolder.getId(), StepDetailsFragment.newInstance(recipe, index), StepDetailsFragment.TAG)
-//                .addToBackStack(StepDetailsFragment.TAG)
-//                .commit();
+//        Intent intent = StepDetailsActivity.getIntent(context, recipe, index);
+//        context.startActivity(intent);
+
+        int holderId;
+        if (detailsHolder != null) {
+            holderId = detailsHolder.getId();
+        } else {
+            holderId = mainHolder.getId();
+        }
+
+        manager.beginTransaction()
+                .replace(holderId, StepDetailsFragment.newInstance(recipe, index), StepDetailsFragment.TAG)
+                .addToBackStack(StepDetailsFragment.TAG)
+                .commit();
     }
 
     public void back(){
