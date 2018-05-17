@@ -38,11 +38,17 @@ public class MainActivity extends AppCompatActivity implements Navigator.Provide
 
         ButterKnife.bind(this);
 
-        navigator.init(getSupportFragmentManager(), mainHolder, detailsHolder);
+        navigator.init(this, getSupportFragmentManager(), mainHolder, detailsHolder);
 
         if (savedInstanceState == null) {
             navigator.navigateToRecipeList();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        navigator.init(this, getSupportFragmentManager(), mainHolder, detailsHolder);
     }
 
     @Override
