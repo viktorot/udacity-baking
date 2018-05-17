@@ -1,19 +1,15 @@
 package io.viktorot.udacity_baking;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 
 import io.reactivex.annotations.NonNull;
 import io.reactivex.annotations.Nullable;
 import io.viktorot.udacity_baking.data.Recipe;
-import io.viktorot.udacity_baking.data.Step;
-import io.viktorot.udacity_baking.ui.details.StepDetailsActivity;
 import io.viktorot.udacity_baking.ui.details.StepDetailsFragment;
 import io.viktorot.udacity_baking.ui.recipe.RecipeListFragment;
 import io.viktorot.udacity_baking.ui.step.StepContainerFragment;
-import io.viktorot.udacity_baking.ui.step.StepListFragment;
 
 public abstract class Navigator {
 
