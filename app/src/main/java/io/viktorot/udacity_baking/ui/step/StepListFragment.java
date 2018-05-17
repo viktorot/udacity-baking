@@ -14,12 +14,9 @@ import android.view.ViewGroup;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.viktorot.udacity_baking.Navigator;
 import io.viktorot.udacity_baking.R;
 import io.viktorot.udacity_baking.data.Recipe;
 import io.viktorot.udacity_baking.data.Step;
-import io.viktorot.udacity_baking.ui.main.MainActivity;
-import timber.log.Timber;
 
 public class StepListFragment extends Fragment {
 
@@ -50,20 +47,19 @@ public class StepListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Bundle args = getArguments();
-        if (args == null) {
-            throw new IllegalArgumentException("arguments must be set");
-        }
-
-        Recipe recipe = args.getParcelable(ARG_RECIPE);
-        if (recipe == null) {
-            throw new IllegalArgumentException("recipe cannot be null");
-        }
+//        Bundle args = getArguments();
+//        if (args == null) {
+//            throw new IllegalArgumentException("arguments must be set");
+//        }
+//
+//        Recipe recipe = args.getParcelable(ARG_RECIPE);
+//        if (recipe == null) {
+//            throw new IllegalArgumentException("recipe cannot be null");
+//        }
 
         adapter = new StepAdapter(this::onClick, requireContext());
 
         viewModel = ViewModelProviders.of(this).get(StepListViewModel.class);
-        viewModel.setData(recipe);
 
         viewModel.recipe.observe(this, data -> {
             if (data == null) {
@@ -71,6 +67,9 @@ public class StepListFragment extends Fragment {
             }
             onDataChanged(data);
         });
+
+        Recipe recipe = getCallback().getData();
+        viewModel.setData(recipe);
     }
 
     @Nullable
@@ -90,7 +89,6 @@ public class StepListFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
     }
 
     private void onDataChanged(@NonNull Recipe recipe) {
@@ -101,10 +99,21 @@ public class StepListFragment extends Fragment {
     private void onClick(@NonNull Step step) {
         Recipe recipe = viewModel.getData();
         int index = recipe.steps.indexOf(step);
-        MainActivity.getNavigator(requireActivity()).navigateToStepDetails(recipe, index);
+        getCallback().openDetails(recipe, index);
     }
 
     private void onBackPressed() {
-        MainActivity.getNavigator(requireActivity()).back();
+        getCallback().back();
+    }
+
+    private StepListFragment.Callback getCallback() {
+        return ((Callback)getParentFragment());
+    }
+
+    interface Callback {
+        Recipe getData();
+
+        void back();
+        void openDetails(Recipe recipe, int index);
     }
 }

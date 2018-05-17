@@ -114,22 +114,23 @@ public class StepDetailsFragment extends Fragment {
         });
 
         Bundle args = getArguments();
-//        if (args == null) {
-//            throw new IllegalArgumentException("arguments must be set");
-//        }
-//
-//        Recipe recipe = args.getParcelable(ARG_RECIPE);
-//        if (recipe == null) {
-//            throw new IllegalArgumentException("recipe cannot be null");
-//        }
-//
-//        int index = args.getInt(ARG_INDEX, 0);
+        if (args == null) {
+            throw new IllegalArgumentException("arguments must be set");
+        }
+
+        Recipe recipe = args.getParcelable(ARG_RECIPE);
+        if (recipe == null) {
+            throw new IllegalArgumentException("recipe cannot be null");
+        }
+
+        int index = args.getInt(ARG_INDEX, 0);
+        setData(recipe, index);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        callback = (StepDetailsFragment.Callback) requireActivity();
+//        callback = (StepDetailsFragment.Callback) requireActivity();
     }
 
     @Nullable
@@ -285,7 +286,7 @@ public class StepDetailsFragment extends Fragment {
     }
 
     private void onBackPressed() {
-        callback.close();
+//        callback.close();
     }
 
     interface Callback {
