@@ -1,11 +1,9 @@
 package io.viktorot.udacity_baking;
 
-import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.view.View;
 
 import io.reactivex.annotations.NonNull;
-import io.reactivex.annotations.Nullable;
 import io.viktorot.udacity_baking.data.Recipe;
 import io.viktorot.udacity_baking.ui.details.StepDetailsFragment;
 import io.viktorot.udacity_baking.ui.recipe.RecipeListFragment;
@@ -13,35 +11,20 @@ import io.viktorot.udacity_baking.ui.step.StepContainerFragment;
 
 public abstract class Navigator {
 
-    private Context context;
-
     private FragmentManager manager;
 
     @NonNull
     private View mainHolder;
 
-    @Nullable
-    private View detailsHolder;
+    protected abstract void close();
 
-    @Nullable
-    private View fullscreenHolder;
-
-
-    public abstract void close();
-
-    public void init(@NonNull Context context, @NonNull FragmentManager manager, @NonNull View main, @Nullable View fullscreen, @Nullable View details) {
-        this.context = context;
+    public void init(@NonNull FragmentManager manager, @NonNull View main) {
         this.manager = manager;
         mainHolder = main;
-        detailsHolder = details;
-        fullscreenHolder = fullscreen;
     }
 
     public void clear() {
         mainHolder = null;
-        detailsHolder = null;
-        fullscreenHolder = null;
-        context = null;
         manager = null;
     }
 
@@ -59,18 +42,8 @@ public abstract class Navigator {
     }
 
     public void navigateToStepDetails(@NonNull Recipe recipe, int index) {
-//        Intent intent = StepDetailsActivity.getIntent(context, recipe, index);
-//        context.startActivity(intent);
-
-        int holderId;
-        if (detailsHolder != null) {
-            holderId = detailsHolder.getId();
-        } else {
-            holderId = mainHolder.getId();
-        }
-
         manager.beginTransaction()
-                .replace(holderId, StepDetailsFragment.newInstance(recipe, index), StepDetailsFragment.TAG)
+                .replace(mainHolder.getId(), StepDetailsFragment.newInstance(recipe, index), StepDetailsFragment.TAG)
                 .addToBackStack(StepDetailsFragment.TAG)
                 .commit();
     }
