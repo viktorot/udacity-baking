@@ -17,6 +17,7 @@ import butterknife.ButterKnife;
 import io.viktorot.udacity_baking.R;
 import io.viktorot.udacity_baking.data.Recipe;
 import io.viktorot.udacity_baking.data.Step;
+import io.viktorot.udacity_baking.ui.util.SpacingItemDecoration;
 
 public class StepListFragment extends Fragment {
 
@@ -76,6 +77,7 @@ public class StepListFragment extends Fragment {
         ButterKnife.bind(this, view);
 
         recycler.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recycler.addItemDecoration(new SpacingItemDecoration());
         recycler.setAdapter(adapter);
 
         return view;

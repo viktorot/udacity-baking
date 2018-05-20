@@ -50,20 +50,23 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center"
+        android:padding="20dp"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="@id/guide"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/container" />
 
-    <Button
+    <ImageButton
         android:id="@+id/prev"
         style="@style/StepNavPrev"
-        android:text="[-]" />
+        android:background="@null"
+        app:srcCompat="@drawable/ic_chevron_left_vector" />
 
-    <Button
+    <ImageButton
         android:id="@+id/next"
         style="@style/StepNavNext"
-        android:text="[+]" />
+        android:background="@null"
+        app:srcCompat="@drawable/ic_chevron_right_vector" />
 
 </android.support.constraint.ConstraintLayout>

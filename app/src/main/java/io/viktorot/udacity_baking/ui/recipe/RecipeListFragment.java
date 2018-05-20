@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,10 +17,10 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.viktorot.udacity_baking.Navigator;
 import io.viktorot.udacity_baking.R;
 import io.viktorot.udacity_baking.data.Recipe;
 import io.viktorot.udacity_baking.ui.main.MainActivity;
+import io.viktorot.udacity_baking.ui.util.SpacingItemDecoration;
 
 public class RecipeListFragment extends Fragment {
 
@@ -87,6 +86,7 @@ public class RecipeListFragment extends Fragment {
         }
 
         recycler.setLayoutManager(manager);
+        recycler.addItemDecoration(new SpacingItemDecoration());
         recycler.setAdapter(adapter);
     }
 
