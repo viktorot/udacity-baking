@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="[No video available]"
+            android:text="@string/no_video"
             android:textAlignment="center"
             android:textColor="@android:color/white" />
 

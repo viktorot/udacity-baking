@@ -45,16 +45,6 @@ public class StepListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-//        Bundle args = getArguments();
-//        if (args == null) {
-//            throw new IllegalArgumentException("arguments must be set");
-//        }
-//
-//        Recipe recipe = args.getParcelable(ARG_RECIPE);
-//        if (recipe == null) {
-//            throw new IllegalArgumentException("recipe cannot be null");
-//        }
-
         adapter = new StepAdapter(this::onClick, requireContext());
 
         viewModel = ViewModelProviders.of(this).get(StepListViewModel.class);

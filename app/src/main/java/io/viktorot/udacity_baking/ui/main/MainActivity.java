@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.WindowManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -15,6 +16,14 @@ public class MainActivity extends AppCompatActivity implements Navigator.Provide
 
     public static Navigator getNavigator(Activity activity) {
         return ((Navigator.Provider) activity).getNavigator();
+    }
+
+    public static void setFullscreen(Activity activity) {
+        ((MainActivity)activity).setFullscreenFlags();
+    }
+
+    public static void clearFullscreen(Activity activity) {
+        ((MainActivity)activity).clearFullscreenFlags();
     }
 
     @BindView(R.id.main_holder)
@@ -34,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements Navigator.Provide
 
         ButterKnife.bind(this);
 
-        navigator.init(this, getSupportFragmentManager(), mainHolder, null, null);
+        initNavigator();
 
         if (savedInstanceState == null) {
             navigator.navigateToRecipes();
@@ -44,12 +53,12 @@ public class MainActivity extends AppCompatActivity implements Navigator.Provide
     @Override
     protected void onStart() {
         super.onStart();
-        navigator.init(this, getSupportFragmentManager(), mainHolder, null, null);
+        initNavigator();
     }
 
     @Override
     protected void onStop() {
-        navigator.clear();
+        clearNavigator();
         super.onStop();
     }
 
@@ -61,5 +70,21 @@ public class MainActivity extends AppCompatActivity implements Navigator.Provide
     @Override
     public Navigator getNavigator() {
         return navigator;
+    }
+
+    private void initNavigator() {
+        navigator.init(getSupportFragmentManager(), mainHolder);
+    }
+
+    private void clearNavigator() {
+        navigator.clear();
+    }
+
+    private void setFullscreenFlags() {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    }
+
+    private void clearFullscreenFlags() {
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 }

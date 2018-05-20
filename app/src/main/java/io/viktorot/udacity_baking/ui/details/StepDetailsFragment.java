@@ -68,9 +68,6 @@ public class StepDetailsFragment extends Fragment {
     private final DefaultTrackSelector trackSelector = new DefaultTrackSelector(bandwidthMeter);
     private SimpleExoPlayer player;
 
-    private ConstraintSet originalConstraints = new ConstraintSet();
-    private ConstraintSet fullscreenConstraints = new ConstraintSet();
-
     private StepDetailsViewModel viewModel;
 
     public static StepDetailsFragment newInstance(@NonNull Recipe recipe, int index) {
@@ -123,9 +120,9 @@ public class StepDetailsFragment extends Fragment {
         setData(recipe, index);
 
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            clearFullscreenFlags();
+            MainActivity.clearFullscreen(requireActivity());
         } else {
-            setFullscreenFlags();
+            MainActivity.setFullscreen(requireActivity());
         }
     }
 
@@ -138,8 +135,6 @@ public class StepDetailsFragment extends Fragment {
 
         toolbar.setNavigationOnClickListener(view1 -> onBackPressed());
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_vector);
-
-        originalConstraints.clone(root);
 
         return view;
     }
@@ -173,7 +168,7 @@ public class StepDetailsFragment extends Fragment {
         if (Util.SDK_INT > 23) {
             releasePlayer();
         }
-        clearFullscreenFlags();
+        MainActivity.clearFullscreen(requireActivity());
         super.onStop();
     }
 
@@ -219,15 +214,8 @@ public class StepDetailsFragment extends Fragment {
         } else {
             showNoVideoLabel();
             showPlayer(false);
+            releasePlayer();
         }
-    }
-
-    private void setFullscreenFlags() {
-        requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    }
-
-    private void clearFullscreenFlags() {
-        requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     private void setupPlayer(String url) {

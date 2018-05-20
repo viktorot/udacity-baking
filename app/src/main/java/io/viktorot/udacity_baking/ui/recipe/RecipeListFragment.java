@@ -71,7 +71,7 @@ public class RecipeListFragment extends Fragment {
 
         ButterKnife.bind(this, view);
 
-        toolbar.setTitle("[Recipes]");
+        toolbar.setTitle(getString(R.string.title_recipe));
 
         return view;
     }
