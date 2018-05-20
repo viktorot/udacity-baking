@@ -15,6 +15,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -35,6 +36,7 @@ import io.viktorot.udacity_baking.R;
 import io.viktorot.udacity_baking.data.Recipe;
 import io.viktorot.udacity_baking.data.Step;
 import io.viktorot.udacity_baking.ui.main.MainActivity;
+import timber.log.Timber;
 
 public class StepDetailsFragment extends Fragment {
 
@@ -82,17 +84,6 @@ public class StepDetailsFragment extends Fragment {
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            restoreConstraints();
-        } else {
-            setFullscreenConstraints();
-        }
-    }
-
-    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -130,6 +121,12 @@ public class StepDetailsFragment extends Fragment {
 
         int index = args.getInt(ARG_INDEX, 0);
         setData(recipe, index);
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            clearFullscreenFlags();
+        } else {
+            setFullscreenFlags();
+        }
     }
 
     @Nullable
@@ -176,6 +173,7 @@ public class StepDetailsFragment extends Fragment {
         if (Util.SDK_INT > 23) {
             releasePlayer();
         }
+        clearFullscreenFlags();
         super.onStop();
     }
 
@@ -224,25 +222,12 @@ public class StepDetailsFragment extends Fragment {
         }
     }
 
-    public void setFullscreenConstraints() {
-        fullscreenConstraints.clone(originalConstraints);
-
-        fullscreenConstraints.setVisibility(toolbar.getId(), ConstraintSet.GONE);
-        fullscreenConstraints.setVisibility(tvDescription.getId(), ConstraintSet.GONE);
-        fullscreenConstraints.setVisibility(R.id.prev, ConstraintSet.GONE);
-        fullscreenConstraints.setVisibility(R.id.next, ConstraintSet.GONE);
-
-        fullscreenConstraints.connect(container.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
-        fullscreenConstraints.connect(container.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
-        fullscreenConstraints.connect(container.getId(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START);
-        fullscreenConstraints.connect(container.getId(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END);
-        fullscreenConstraints.setDimensionRatio(container.getId(), null);
-
-        fullscreenConstraints.applyTo(root);
+    private void setFullscreenFlags() {
+        requireActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
-    public void restoreConstraints() {
-        originalConstraints.applyTo(root);
+    private void clearFullscreenFlags() {
+        requireActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
     }
 
     private void setupPlayer(String url) {

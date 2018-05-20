@@ -34,11 +34,12 @@ dependencies {
 
     implementation 'com.squareup.picasso:picasso:2.5.2'
 
-    implementation ('com.google.android.exoplayer:exoplayer:2.8.0') {
+    implementation('com.google.android.exoplayer:exoplayer:2.8.0') {
         exclude group: 'com.android.support'
     }
 
     implementation 'com.jakewharton:butterknife:8.8.1'
+    implementation 'com.android.support:support-v4:27.1.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
@@ -46,7 +47,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.4.0'
 
     implementation 'io.reactivex.rxjava2:rxjava:2.1.13'
-    implementation ('io.reactivex.rxjava2:rxandroid:2.0.2') {
+    implementation('io.reactivex.rxjava2:rxandroid:2.0.2') {
         exclude group: 'io.reactivex.rxjava2', module: 'rxjava'
     }
 

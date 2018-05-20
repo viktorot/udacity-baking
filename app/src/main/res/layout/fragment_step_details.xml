@@ -25,7 +25,8 @@
 
     <FrameLayout
         android:id="@+id/container"
-        style="@style/PlayerContainer">
+        style="@style/PlayerContainer"
+        android:background="@android:color/black">
 
         <TextView
             android:id="@+id/no_video"
@@ -34,7 +35,7 @@
             android:gravity="center"
             android:text="[No video available]"
             android:textAlignment="center"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/white" />
 
         <com.google.android.exoplayer2.ui.PlayerView
             android:id="@+id/player_view"
