@@ -44,6 +44,8 @@ public class StepDetailsFragment extends Fragment {
 
     private static final String ARG_RECIPE = "arg_recipe";
     private static final String ARG_INDEX = "arg_index";
+    private static final String ARG_PLAYING = "arg_playing";
+    private static final String ARG_POSITION = "arg_position";
 
     @BindView(R.id.root)
     ConstraintLayout root;
@@ -67,6 +69,10 @@ public class StepDetailsFragment extends Fragment {
     private final BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
     private final DefaultTrackSelector trackSelector = new DefaultTrackSelector(bandwidthMeter);
     private SimpleExoPlayer player;
+
+    private boolean restorePlayerState = false;
+    private boolean prevPlayerPlayState = true;
+    private long prevPlayerPosition = 0;
 
     private StepDetailsViewModel viewModel;
 
@@ -103,8 +109,16 @@ public class StepDetailsFragment extends Fragment {
         Bundle args;
         if (savedInstanceState == null) {
             args = getArguments();
+
+            prevPlayerPlayState = true;
+            prevPlayerPosition = 0;
+            restorePlayerState = false;
         } else {
             args = savedInstanceState;
+
+            prevPlayerPlayState = args.getBoolean(ARG_PLAYING, true);
+            prevPlayerPosition = args.getLong(ARG_POSITION, 0);
+            restorePlayerState = true;
         }
 
         if (args == null) {
@@ -158,7 +172,7 @@ public class StepDetailsFragment extends Fragment {
     @Override
     public void onPause() {
         if (Util.SDK_INT <= 23) {
-            releasePlayer();
+            releasePlayer(true);
         }
         super.onPause();
     }
@@ -166,7 +180,7 @@ public class StepDetailsFragment extends Fragment {
     @Override
     public void onStop() {
         if (Util.SDK_INT > 23) {
-            releasePlayer();
+            releasePlayer(true);
         }
         MainActivity.clearFullscreen(requireActivity());
         super.onStop();
@@ -182,6 +196,14 @@ public class StepDetailsFragment extends Fragment {
         int index = viewModel.getIndex();
         if (index > -1) {
             outState.putInt(ARG_INDEX, index);
+        }
+
+        if (player != null) {
+            long position = player.getCurrentPosition();
+            boolean playing = player.getPlayWhenReady();
+
+            outState.putBoolean(ARG_PLAYING, playing);
+            outState.putLong(ARG_POSITION, position);
         }
     }
 
@@ -227,14 +249,21 @@ public class StepDetailsFragment extends Fragment {
         initPlayer(false);
 
         player.prepare(source, true, true);
-        player.setPlayWhenReady(true);
+
+        if (restorePlayerState) {
+            player.seekTo(prevPlayerPosition);
+            player.setPlayWhenReady(prevPlayerPlayState);
+            restorePlayerState = false;
+        } else {
+            player.setPlayWhenReady(true);
+        }
+
         playerView.setPlayer(player);
     }
 
     private void initPlayer(boolean restore) {
         if (player == null) {
             player = ExoPlayerFactory.newSimpleInstance(requireContext(), trackSelector);
-
             if (restore) {
                 Step step = viewModel.getCurrentStep();
                 if (step != null) {
@@ -245,9 +274,20 @@ public class StepDetailsFragment extends Fragment {
     }
 
     private void releasePlayer() {
+        releasePlayer(false);
+    }
+
+    private void releasePlayer(boolean store) {
         if (player == null) {
             return;
         }
+
+        if (store) {
+            prevPlayerPosition = player.getContentPosition();
+            prevPlayerPlayState = player.getPlayWhenReady();
+            restorePlayerState = true;
+        }
+
         player.stop();
         player.release();
         player = null;
