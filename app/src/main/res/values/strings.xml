@@ -5,4 +5,6 @@
     <string name="no_fav_recipe">Favorite recipe not selected</string>
     <string name="fav">Fav</string>
     <string name="unfav">UnFav</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="recipe_error">Error retrieving recipes</string>
 </resources>

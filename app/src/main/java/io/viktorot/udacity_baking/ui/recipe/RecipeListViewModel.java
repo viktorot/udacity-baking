@@ -12,6 +12,7 @@ import io.reactivex.disposables.Disposable;
 import io.viktorot.udacity_baking.BakingApplication;
 import io.viktorot.udacity_baking.Repo;
 import io.viktorot.udacity_baking.data.Recipe;
+import io.viktorot.udacity_baking.ui.util.SingleLiveEvent;
 import timber.log.Timber;
 
 public class RecipeListViewModel extends AndroidViewModel {
@@ -19,6 +20,7 @@ public class RecipeListViewModel extends AndroidViewModel {
     private Disposable dataDisposable;
 
     public MutableLiveData<List<Recipe>> recipes = new MutableLiveData<>();
+    public SingleLiveEvent<Boolean> error = new SingleLiveEvent<>();
 
     public RecipeListViewModel(@NonNull Application application) {
         super(application);
@@ -38,6 +40,7 @@ public class RecipeListViewModel extends AndroidViewModel {
 
     private void onError(Throwable error) {
         Timber.e(error, "error getting recipes");
+        this.error.setValue(true);
     }
 
     private void dispose() {

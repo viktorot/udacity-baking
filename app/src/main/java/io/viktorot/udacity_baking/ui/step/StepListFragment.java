@@ -86,7 +86,7 @@ public class StepListFragment extends Fragment {
 
     private void onDataChanged(@NonNull Recipe recipe) {
         StringBuilder sb = new StringBuilder();
-        sb.append("<strong>").append("[Ingredients]").append("</strong><br/><br/>");
+        sb.append("<strong>").append(getString(R.string.ingredients)).append("</strong><br/><br/>");
         for (Ingredient ing: recipe.ingredients) {
             sb.append("&#8226; ").append(ing.name).append("<br/>");
         }

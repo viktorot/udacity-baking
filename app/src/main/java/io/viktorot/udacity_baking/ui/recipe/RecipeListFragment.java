@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -65,6 +66,12 @@ public class RecipeListFragment extends Fragment implements RecipeAdapter.Callba
             }
             onDataLoaded(recipes);
         });
+        viewModel.error.observe(this, error -> {
+            if (error == null || !error) {
+                return;
+            }
+            showError();
+        });
     }
 
     @Nullable
@@ -95,6 +102,10 @@ public class RecipeListFragment extends Fragment implements RecipeAdapter.Callba
 
     private void onDataLoaded(@NonNull List<Recipe> items) {
         adapter.setItems(items);
+    }
+
+    private void showError() {
+        Toast.makeText(requireContext(), getString(R.string.recipe_error), Toast.LENGTH_LONG).show();
     }
 
     @Override
