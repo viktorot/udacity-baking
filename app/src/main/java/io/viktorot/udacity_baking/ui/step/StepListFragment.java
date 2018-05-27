@@ -8,13 +8,16 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.viktorot.udacity_baking.R;
+import io.viktorot.udacity_baking.data.Ingredient;
 import io.viktorot.udacity_baking.data.Recipe;
 import io.viktorot.udacity_baking.data.Step;
 import io.viktorot.udacity_baking.ui.util.SpacingItemDecoration;
@@ -26,6 +29,9 @@ public class StepListFragment extends Fragment {
     private static final String ARG_RECIPE = "arg_recipe";
 
     private StepListViewModel viewModel;
+
+    @BindView(R.id.ingredients)
+    TextView tvIngredients;
 
     @BindView(R.id.recycler)
     RecyclerView recycler;
@@ -69,6 +75,7 @@ public class StepListFragment extends Fragment {
         recycler.setLayoutManager(new LinearLayoutManager(requireContext()));
         recycler.addItemDecoration(new SpacingItemDecoration());
         recycler.setAdapter(adapter);
+        recycler.setNestedScrollingEnabled(false);
 
         return view;
     }
@@ -78,6 +85,13 @@ public class StepListFragment extends Fragment {
     }
 
     private void onDataChanged(@NonNull Recipe recipe) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<strong>").append("[Ingredients]").append("</strong><br/><br/>");
+        for (Ingredient ing: recipe.ingredients) {
+            sb.append("&#8226; ").append(ing.name).append("<br/>");
+        }
+
+        this.tvIngredients.setText(Html.fromHtml(sb.toString()));
         this.adapter.setItems(recipe.steps);
     }
 
