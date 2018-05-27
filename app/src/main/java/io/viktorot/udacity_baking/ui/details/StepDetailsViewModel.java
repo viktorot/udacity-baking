@@ -19,6 +19,10 @@ public class StepDetailsViewModel extends AndroidViewModel {
     private int stepCount = 0;
     private int index = -1;
 
+    boolean restore = false;
+    boolean playing = false;
+    long position = 0;
+
     public StepDetailsViewModel(@NonNull Application application) {
         super(application);
     }
@@ -38,14 +42,6 @@ public class StepDetailsViewModel extends AndroidViewModel {
 
     public int getIndex() {
         return index;
-    }
-
-    @Nullable
-    public Step getCurrentStep() {
-        if (index == -1) {
-            return null;
-        }
-        return getStepAt(index);
     }
 
     private Step getStepAt(int index) {

@@ -1,5 +1,6 @@
 package io.viktorot.udacity_baking.ui.details;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -70,9 +71,12 @@ public class StepDetailsFragment extends Fragment {
     private final DefaultTrackSelector trackSelector = new DefaultTrackSelector(bandwidthMeter);
     private SimpleExoPlayer player;
 
-    private boolean restorePlayerState = false;
-    private boolean prevPlayerPlayState = true;
-    private long prevPlayerPosition = 0;
+    private final Observer<Step> stepObserver = step -> {
+        if (step == null) {
+            return;
+        }
+        onStepChanged(step);
+    };
 
     private StepDetailsViewModel viewModel;
 
@@ -93,32 +97,16 @@ public class StepDetailsFragment extends Fragment {
         userAgent = Util.getUserAgent(requireContext().getApplicationContext(), "imbakingmom");
 
         viewModel = ViewModelProviders.of(this).get(StepDetailsViewModel.class);
-        viewModel.recipe.observe(this, data -> {
-            if (data == null) {
-                return;
-            }
-            onDataChanged(data);
-        });
-        viewModel.step.observe(this, data -> {
-            if (data == null) {
-                return;
-            }
-            onStepChanged(data);
-        });
 
         Bundle args;
         if (savedInstanceState == null) {
             args = getArguments();
-
-            prevPlayerPlayState = true;
-            prevPlayerPosition = 0;
-            restorePlayerState = false;
         } else {
             args = savedInstanceState;
 
-            prevPlayerPlayState = args.getBoolean(ARG_PLAYING, true);
-            prevPlayerPosition = args.getLong(ARG_POSITION, 0);
-            restorePlayerState = true;
+            viewModel.playing = args.getBoolean(ARG_PLAYING, true);
+            viewModel.position = args.getLong(ARG_POSITION, 0);
+            viewModel.restore = true;
         }
 
         if (args == null) {
@@ -153,11 +141,12 @@ public class StepDetailsFragment extends Fragment {
         return view;
     }
 
+
     @Override
     public void onStart() {
         super.onStart();
         if (Util.SDK_INT > 23) {
-            initPlayer(true);
+            initPlayer();
         }
     }
 
@@ -165,8 +154,9 @@ public class StepDetailsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if (Util.SDK_INT <= 23) {
-            initPlayer(true);
+            initPlayer();
         }
+        viewModel.step.observe(this, stepObserver);
     }
 
     @Override
@@ -174,6 +164,7 @@ public class StepDetailsFragment extends Fragment {
         if (Util.SDK_INT <= 23) {
             releasePlayer(true);
         }
+        viewModel.step.removeObserver(stepObserver);
         super.onPause();
     }
 
@@ -221,9 +212,6 @@ public class StepDetailsFragment extends Fragment {
         viewModel.setData(recipe, index);
     }
 
-    private void onDataChanged(@NonNull Recipe recipe) {
-    }
-
     private void onStepChanged(@NonNull Step step) {
         toolbar.setTitle(step.shortDescription);
         tvDescription.setText(step.description);
@@ -231,29 +219,24 @@ public class StepDetailsFragment extends Fragment {
         if (!TextUtils.isEmpty(step.videoURL)) {
             showPlayer();
             showNoVideoLabel(false);
-
-            setupPlayer(step.videoURL);
+            playUrl(step.videoURL);
         } else {
             showNoVideoLabel();
             showPlayer(false);
-            releasePlayer();
+            player.stop();
         }
     }
 
-    private void setupPlayer(String url) {
-        releasePlayer();
-
+    private void playUrl(String url) {
         DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(requireContext().getApplicationContext(), userAgent);
         MediaSource source = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(url));
 
-        initPlayer(false);
-
         player.prepare(source, true, true);
 
-        if (restorePlayerState) {
-            player.seekTo(prevPlayerPosition);
-            player.setPlayWhenReady(prevPlayerPlayState);
-            restorePlayerState = false;
+        if (viewModel.restore) {
+            player.seekTo(viewModel.position);
+            player.setPlayWhenReady(viewModel.playing);
+            viewModel.restore = false;
         } else {
             player.setPlayWhenReady(true);
         }
@@ -261,16 +244,12 @@ public class StepDetailsFragment extends Fragment {
         playerView.setPlayer(player);
     }
 
-    private void initPlayer(boolean restore) {
-        if (player == null) {
-            player = ExoPlayerFactory.newSimpleInstance(requireContext(), trackSelector);
-            if (restore) {
-                Step step = viewModel.getCurrentStep();
-                if (step != null) {
-                    onStepChanged(step);
-                }
-            }
+    private void initPlayer() {
+        if (player != null) {
+            return;
         }
+
+        player = ExoPlayerFactory.newSimpleInstance(requireContext(), trackSelector);
     }
 
     private void releasePlayer() {
@@ -283,9 +262,9 @@ public class StepDetailsFragment extends Fragment {
         }
 
         if (store) {
-            prevPlayerPosition = player.getContentPosition();
-            prevPlayerPlayState = player.getPlayWhenReady();
-            restorePlayerState = true;
+            viewModel.playing = player.getPlayWhenReady();
+            viewModel.position = player.getContentPosition();
+            viewModel.restore = true;
         }
 
         player.stop();
