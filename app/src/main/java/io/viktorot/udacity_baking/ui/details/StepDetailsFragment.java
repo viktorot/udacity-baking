@@ -162,7 +162,7 @@ public class StepDetailsFragment extends Fragment {
     @Override
     public void onPause() {
         if (Util.SDK_INT <= 23) {
-            releasePlayer(true);
+            releasePlayer();
         }
         viewModel.step.removeObserver(stepObserver);
         super.onPause();
@@ -171,7 +171,7 @@ public class StepDetailsFragment extends Fragment {
     @Override
     public void onStop() {
         if (Util.SDK_INT > 23) {
-            releasePlayer(true);
+            releasePlayer();
         }
         MainActivity.clearFullscreen(requireActivity());
         super.onStop();
@@ -253,19 +253,13 @@ public class StepDetailsFragment extends Fragment {
     }
 
     private void releasePlayer() {
-        releasePlayer(false);
-    }
-
-    private void releasePlayer(boolean store) {
         if (player == null) {
             return;
         }
 
-        if (store) {
-            viewModel.playing = player.getPlayWhenReady();
-            viewModel.position = player.getContentPosition();
-            viewModel.restore = true;
-        }
+        viewModel.playing = player.getPlayWhenReady();
+        viewModel.position = player.getContentPosition();
+        viewModel.restore = true;
 
         player.stop();
         player.release();
