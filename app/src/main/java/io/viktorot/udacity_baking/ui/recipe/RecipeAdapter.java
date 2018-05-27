@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,16 +28,24 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
     @NonNull
     private Context context;
 
+    private Recipe fav = null;
+
     private ArrayList<Recipe> items = new ArrayList<>();
 
-    public RecipeAdapter(@NonNull RecipeAdapter.Callback callback, @NonNull Context context) {
+    public RecipeAdapter(@NonNull RecipeAdapter.Callback callback, @NonNull Context context, @Nullable Recipe fav) {
         this.callback = callback;
         this.context = context;
+        this.fav = fav;
     }
 
     public void setItems(List<Recipe> items) {
         this.items.clear();
         this.items.addAll(items);
+        notifyDataSetChanged();
+    }
+
+    public void onFavUpdated(Recipe recipe) {
+        this.fav = recipe;
         notifyDataSetChanged();
     }
 
@@ -52,6 +61,14 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
                 return;
             }
             callback.onClick(holder.data);
+        });
+
+        holder.btnFav.setOnClickListener(view1 -> {
+            if (holder.data == null) {
+                return;
+            }
+            // TODO
+            callback.onSetAsFav(holder.data);
         });
 
         return holder;
@@ -71,6 +88,16 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
         } else {
             holder.img.setBackgroundResource(R.drawable.placeholder);
         }
+
+        if (fav == null) {
+            holder.btnFav.setText("[fav]");
+        } else {
+            if (fav.id == item.id) {
+                holder.btnFav.setText("[unfav]");
+            } else {
+                holder.btnFav.setText("[fav]");
+            }
+        }
     }
 
     @Override
@@ -85,16 +112,19 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
         final View root;
         final TextView tvTitle;
         final ImageView img;
+        final Button btnFav;
 
         ViewHolder(View itemView) {
             super(itemView);
             root = itemView.findViewById(R.id.root);
             tvTitle = itemView.findViewById(R.id.title);
             img = itemView.findViewById(R.id.image);
+            btnFav = itemView.findViewById(R.id.fav);
         }
     }
 
     interface Callback {
         void onClick(Recipe recipe);
+        void onSetAsFav(Recipe recipe);
     }
 }

@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 
+import io.viktorot.udacity_baking.Prefs;
 import io.viktorot.udacity_baking.R;
+import io.viktorot.udacity_baking.data.Recipe;
 
 public class RecipeWidget extends AppWidgetProvider {
 
@@ -18,9 +20,16 @@ public class RecipeWidget extends AppWidgetProvider {
     }
 
     private void update(Context context, AppWidgetManager manager, int widgetId) {
+        Recipe recipe = Prefs.getFavRecipe(context);
+
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_recipe);
-        views.setTextViewText(R.id.title, "title");
-        views.setRemoteAdapter(R.id.list, new Intent(context, RecipeWidgetRemoteViewService.class));
+
+        if (recipe == null) {
+            views.setTextViewText(R.id.title, "[no recipe]");
+        } else {
+            views.setTextViewText(R.id.title, recipe.name);
+            views.setRemoteAdapter(R.id.list, new Intent(context, RecipeWidgetRemoteViewService.class));
+        }
 
         manager.updateAppWidget(widgetId, views);
     }

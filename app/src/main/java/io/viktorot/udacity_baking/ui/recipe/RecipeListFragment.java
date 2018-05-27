@@ -1,6 +1,11 @@
 package io.viktorot.udacity_baking.ui.recipe;
 
+import android.app.Application;
+import android.appwidget.AppWidgetManager;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,12 +22,15 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.viktorot.udacity_baking.BakingApplication;
+import io.viktorot.udacity_baking.Prefs;
 import io.viktorot.udacity_baking.R;
 import io.viktorot.udacity_baking.data.Recipe;
 import io.viktorot.udacity_baking.ui.main.MainActivity;
 import io.viktorot.udacity_baking.ui.util.SpacingItemDecoration;
+import io.viktorot.udacity_baking.widget.RecipeWidget;
 
-public class RecipeListFragment extends Fragment {
+public class RecipeListFragment extends Fragment implements RecipeAdapter.Callback {
 
     public static final String TAG = "RecipeListFragment";
 
@@ -52,7 +60,8 @@ public class RecipeListFragment extends Fragment {
 
         isTablet = getResources().getBoolean(R.bool.isTablet);
 
-        adapter = new RecipeAdapter(this::onRecipeClick, requireContext());
+        Recipe fav = Prefs.getFavRecipe(requireContext());
+        adapter = new RecipeAdapter(this, requireContext(), fav);
 
         viewModel = ViewModelProviders.of(this).get(RecipeListViewModel.class);
 
@@ -94,7 +103,15 @@ public class RecipeListFragment extends Fragment {
         adapter.setItems(items);
     }
 
-    private void onRecipeClick(Recipe recipe) {
+    @Override
+    public void onClick(Recipe recipe) {
         MainActivity.getNavigator(requireActivity()).navigateToStepList(recipe);
+    }
+
+    @Override
+    public void onSetAsFav(Recipe recipe) {
+        Prefs.saveFavRecipe(requireContext(), recipe);
+        adapter.onFavUpdated(recipe);
+        BakingApplication.updateWidgets(requireContext());
     }
 }
