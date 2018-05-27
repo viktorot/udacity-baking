@@ -11,20 +11,10 @@ import io.viktorot.udacity_baking.service.RecipeServiceBuilder;
 
 public class Repo {
 
-    @Nullable
-    private static Repo instance = null;
+    private RecipeService service;
 
-    private final RecipeService service;
-
-    private Repo() {
+    public Repo() {
         service = RecipeServiceBuilder.build();
-    }
-
-    public static Repo get() {
-        if (instance == null) {
-            instance = new Repo();
-        }
-        return instance;
     }
 
     public Single<List<Recipe>> getRecipes() {

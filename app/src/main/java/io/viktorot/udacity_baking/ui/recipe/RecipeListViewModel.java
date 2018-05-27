@@ -9,6 +9,7 @@ import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.viktorot.udacity_baking.BakingApplication;
 import io.viktorot.udacity_baking.Repo;
 import io.viktorot.udacity_baking.data.Recipe;
 import timber.log.Timber;
@@ -26,7 +27,7 @@ public class RecipeListViewModel extends AndroidViewModel {
 
     private void init() {
         dispose();
-        dataDisposable = Repo.get().getRecipes()
+        dataDisposable = BakingApplication.repo(getApplication()).getRecipes()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onSuccess, this::onError);
     }

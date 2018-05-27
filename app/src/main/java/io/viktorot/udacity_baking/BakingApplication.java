@@ -5,11 +5,14 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.VisibleForTesting;
 
 import io.viktorot.udacity_baking.widget.RecipeWidget;
 import timber.log.Timber;
 
 public class BakingApplication extends Application {
+
+    private Repo repo;
 
     public static void updateWidgets(Context context) {
         Application app = (Application) context.getApplicationContext();
@@ -24,6 +27,16 @@ public class BakingApplication extends Application {
         app.sendBroadcast(intent);
     }
 
+    public static Repo repo(Context context) {
+        BakingApplication app = (BakingApplication) context.getApplicationContext();
+        return app.repo;
+    }
+
+    @VisibleForTesting
+    public void setRepo(Repo repo) {
+        this.repo = repo;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -31,5 +44,7 @@ public class BakingApplication extends Application {
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         }
+
+        this.repo = new Repo();
     }
 }
