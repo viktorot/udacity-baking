@@ -25,7 +25,7 @@ public class RecipeWidget extends AppWidgetProvider {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_recipe);
 
         if (recipe == null) {
-            views.setTextViewText(R.id.title, "[no recipe]");
+            views.setTextViewText(R.id.title, context.getString(R.string.no_fav_recipe));
         } else {
             views.setTextViewText(R.id.title, recipe.name);
             views.setRemoteAdapter(R.id.list, new Intent(context, RecipeWidgetRemoteViewService.class));

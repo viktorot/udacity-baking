@@ -2,4 +2,7 @@
     <string name="app_name">udacity-baking</string>
     <string name="title_recipe">Recipes</string>
     <string name="no_video">No video available</string>
+    <string name="no_fav_recipe">Favorite recipe not selected</string>
+    <string name="fav">Fav</string>
+    <string name="unfav">UnFav</string>
 </resources>

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.squareup.picasso.Picasso;
 
@@ -89,15 +90,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
             holder.img.setBackgroundResource(R.drawable.placeholder);
         }
 
-        if (fav == null) {
-            holder.btnFav.setText("[fav]");
-        } else {
-            if (fav.id == item.id) {
-                holder.btnFav.setText("[unfav]");
-            } else {
-                holder.btnFav.setText("[fav]");
-            }
-        }
+        boolean isFav = fav != null && fav.id == item.id;
+        holder.btnFav.setChecked(isFav);
     }
 
     @Override
@@ -112,7 +106,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.ViewHolder
         final View root;
         final TextView tvTitle;
         final ImageView img;
-        final Button btnFav;
+        final ToggleButton btnFav;
 
         ViewHolder(View itemView) {
             super(itemView);
